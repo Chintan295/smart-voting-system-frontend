@@ -1,235 +1,200 @@
 <template>
 <div class="container">
-  <div><Header></Header></div>
-  <div class="cards">
-    <Statements></Statements>
-  <div class="rectangle17">
-  <div class="inherit">
-  <div class="statement">
-    <ul><h3>Statement :</h3><li>{{statement}}</li></ul>
-    <button>Create Statement</button>
-  </div>
-  <div class="container17">
-    <ul class="users line-height"> <h3> Guest Joined </h3>
-      <li>Guest1</li>
-      <li>Guest2</li>
-      <li>Guest3</li>
-      <li>Guest4</li>
-    </ul>
-  <ul class="stats line-height"> <h3> Statistics </h3>
-    <li>Average:</li>
-    <li>Median:</li>
-    <li>Mode:</li>
-  </ul>
-  </div>
-  <button class="end-room">End Room</button>
-  </div>
-  </div>
-  <div class="rectangle18">
-    <div class="title18">CHAT ROOM</div>
-    <div class="overflow">
-    <!-- Chat Part -->
-    <div class="chat">
-      <span class="you">
-        <span class="username"> Vincent</span>
-        <div class="triangle"></div>
-        <div class="message">
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-        </div>
-      </span>
+  <Header></Header>
+
+    <div class="cards">
+      <Statements></Statements>
+    <div class="rectangle17">
+    <div class="inherit">
+    <div class="statement">
+      <div class="padding w8"><h3>Statement :</h3><p>{{statement}}</p></div>
+      <button class="w2" @click="showPopup" v-show="isAdmin">Create Statement</button>
+    </div>
+    <div class="container17">
+      <div class="inherit"> <h3> Guest Joined </h3>
+      <ul class="users line-height">
+        <li>Guestkbbkbk <span class="light green"></span></li>
+        <li>Guest2 <span class="light red"></span></li>
+        <li>Guest3 <span class="light green"></span></li>
+        <li>Guest4 <span class="light red"></span></li>
+        <li>Guest4 <span class="light green"></span></li>
+        <li>Guest4 <span class="light red"></span></li>
+        <li>Guest4 <span class="light red"></span></li>
+        <li>Guest4 <span class="light green"></span></li>
+      </ul>
+      </div>
+    <div class="stats inherit"> <h3> Statistics </h3>
+      <li>Average:</li>
+      <li>Median:</li>
+      <li>Mode:</li>
+    </div>
+    <button class="end-room" @click="exit">{{buttonName}}</button>
+    </div>
+    </div>
+    <CreateStatement v-show="visiblePopup" @hide="removePopup"></CreateStatement>
     </div>
 
-    <div class="chat">
-      <span class="you">
-       <span class="username"> Vincent</span>
-        <div class="triangle"></div>
-        <div class="message">
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-        </div>
-      </span>
-    </div>
-
-    <div class="chat">
-      <span class="you">
-       <span class="username"> Vincent</span>
-        <div class="triangle"></div>
-        <div class="message">
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-        </div>
-      </span>
-    </div>
-
-    <div class="chat">
-        <span class="username"> Vincent</span>
-        <div class="triangle"></div>
-        <div class="message">
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-        </div>
-    </div>
-    </div>
-    <!-- Type Box -->
-    <div class="typebox">
-      <div class="type"><input type="text" placeholder="type text here ..."/></div>
-      <button class="send">Send</button>
-    </div>
-  </div>
+  <ChatRoom></ChatRoom>
   </div>
 </div>
 </template>
 
 <script>
+import ChatRoom from '../components/ChatRoom.vue'
+import CreateStatement from '../components/CreateStatement.vue'
 import Header from '../components/Header.vue'
 import Statements from '../components/Statements.vue'
+import router from '../router'
 export default {
   name: 'AdminRoom',
   data () {
     return {
       user: 'Abhi',
+      isAdmin: false,
+      buttonName: 'Leave Room',
+      visiblePopup: false,
       chatText: 'Hey Dude, my chat-box is working good !!',
-      statement: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.'
+      statement: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.'
     }
   },
-  components: { Header, Statements }
+  methods: {
+    showPopup () {
+      this.visiblePopup = true
+    },
+    removePopup () {
+      this.visiblePopup = false
+    },
+    exit () {
+      if (this.isAdmin) {
+        // Remove Every Guest From Room
+      } else {
+        // Method to remove Guest
+        sessionStorage.clear('guestName')
+        router.push('/join')
+      }
+    }
+  },
+  components: { Header, Statements, ChatRoom, CreateStatement },
+  created () {
+    const name = sessionStorage.getItem('guestName')
+    if (name === null) {
+      router.push('/join')
+    } else if (name === 'admin') {
+      this.isAdmin = true
+      this.buttonName = 'End Room'
+    }
+  }
 }
 </script>
-
 <style scoped>
-*{
-  outline: none;
-  list-style-type: none;
+.padding{padding: 35px;}
+.w8{
+  width: 80%;
+}
+.w2{
+  width: 20%;
 }
 .inherit{
-  height: 82%;
+  height:auto;
 }
-.username{
-  font-weight: bolder;
-  font-size: 110%;
-}
+
 .end-room{
-  margin-left: 33%;
+  position: absolute;
+  right: 6%;
+  bottom: 7%;
   border-radius: 10px;
   border-color: white;
   background-color: rgb(231, 118, 118);
-  width: 260px;
+  width: 200px;
   height: 50px;
   font-size: 110%;
+  opacity: 0.9;
 }
 .end-room:active{
   transform:  scale(0.98);
+  opacity: 1;
 }
-.line-height{
-  line-height: 0.2em;
+.light{
+  margin-right: 0px;
+  height: 20px;
+  width: 20px;
+  align-content: center;
+  border-radius: 50%;
+  border-bottom: 2px solid rgb(44, 41, 41);
+  border-right: 2px solid rgb(44, 41, 41);
+}
+.red{
+  background-color: red;
+}
+.green{
+  background-color: rgb(42, 230, 57);
 }
 .users{
  height: 70%;
  width: 400px;
  justify-content: space-between;
+ overflow-y: scroll;
+}
+.users li{
+  margin-top: 5px;
+  box-shadow: 0px 0px 0px white,0px 0px 0px white,0px 0px 4px black,0px 0px 0px white;
+
 }
 .stats{
  height: 70%;
- width: 300px;
- border-left: 1px solid black;
+ max-width: 100%;
 }
 .container17{
+  position: relative;
+  margin-top: 10px;
   display: flex;
   flex-direction: row;
-  height: 80%;
+  max-height: auto;
+  bottom: 50px;
 }
 .statement{
  height: auto;
- width: 100%;
+ max-width: 100%;
  display: flex;
  flex-direction: row;
  justify-content: space-between;
 }
 .statement button{
+  position: absolute;
   margin-top:4%;
-  margin-right: 2%;
+  right:10px;
   border-radius: 10px;
   border-color: white;
   background-color: skyblue;
-  width: 260px;
+  width: 150px;
   height: 50px;
-  font-size: 110%;
+  margin-left: 5px;
+  font-size: 15px;
+  opacity: 0.8;
 }
 .statement button:active{
   transform:  scale(0.98);
+  opacity: 1;
 }
 .statement h3{
   margin-top:2%;
 }
-h3{
+.container17 h3{
+  margin-left: 9%;
+  text-align:inherit;
   color: rgb(44, 41, 41);
   letter-spacing: 0.05em;
+  line-height: 50px;
 }
-.typebox{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 50px;
-    border-radius: 10px;
-    margin-left: 15px;
-}
-.type{
- align-content: center;
- width: 70%;
- height: 100%;
-}
-.type input{
-  margin-top:5.3%;
-  margin-left:5%;
-  width: 90%;
-  height: 60%;
-  border-radius: 10px;
-  border: none;
-}
-.send{
-  width: 20%;
-  height: 60%;
-  margin-top:4%;
-  border-radius: 10px;
-  border-color: white;
-  background-color: skyblue;
-  border-style: outset;
-  text-align: center;
-}
-.send:active{
-  transform:  scale(0.98);
-}
-.overflow{
-  overflow-y: scroll;
-  background-color:  rgb(236, 235, 235);
-  backdrop-filter: blur( 50.0px );
-  height: 80%;
-}
-
-.triangle {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0px 10px 10px 10px;
-    border-color: transparent transparent #58b666 transparent;
-    margin-left: 15px;
-}
-
-.message {
-    padding: 15px;
-    color: #fff;
-    max-width: 100%;
-    display: inline-block;
-    text-align: left;
-    border-radius: 5px;
-    background-color: #59a765;
-}
-.chat {
-  padding: 10px 30px;
-}
-
-.container{
-  height: 100%;
-  width: 100%;
+.container17 li{
+  padding: 10px;
   display: flex;
-  flex-direction: column;
+  width: 80%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+ul{
+  list-style-type: disc;
 }
 .cards{
   position: absolute;
@@ -240,80 +205,13 @@ h3{
   flex-direction: row;
   justify-content: space-evenly;
 }
-.rectangle16{
-  display: flex;
-  flex-direction: column;
-width: 23%;
-height: auto;
-background-color: rgb(188, 161, 219);
-backdrop-filter: blur( 15.0px );
-box-shadow: 0px 2px 4px 4px rgba(0, 0, 0, 0.25);
-border-radius: 24px;
-}
+
 .rectangle17{
+position: relative;
 width: 48%;
 height: 100%;
 background: rgb(236, 235, 235);
 box-shadow: 0px 2px 4px 4px rgba(0, 0, 0, 0.25);
 border-radius: 26px;
 }
-.rectangle17  li{
-  line-height: 25px;
-  letter-spacing: 0.1em;
-}
-.rectangle18{
-display: flex;
-flex-direction: column;
-width: 23%;
-height: auto;
-background-color: rgb(188, 161, 219);
-backdrop-filter: blur( 15.0px );
-box-shadow: 0px 2px 4px 4px rgba(0, 0, 0, 0.25);
-border-radius: 20px;
-}
-.title16{
-margin-top:20px;
-margin-left:25%;
-font-family: Roboto;
-font-style: normal;
-font-weight: bold;
-font-size: 24px;
-line-height: 28px;
-margin-bottom: 30px;
-color: #4e4d4d;
-letter-spacing: 0.08em;
-}
-.title18{
-margin-top:20px;
-margin-left:26%;
-font-family: Roboto;
-font-style: normal;
-font-weight: bold;
-font-size: 24px;
-line-height: 28px;
-margin-bottom: 30px;
-color: #4e4d4d;
-letter-spacing: 0.08em;
-}
-.history{
-margin: 10px;
-padding: 15px;
-height: auto;
-font-family: Roboto;
-font-style: normal;
-font-weight: normal;
-font-size: 16px;
-line-height: 19px;
-color: #7B7B7B;
-box-shadow: 0px 4px 4px rgba(35, 57, 70, 0.25);
-background-color: rgb(245, 230, 208);
-border-bottom-left-radius: 30px;
-border-top-right-radius: 30px;
-}
-.history:hover{
-transition: transform 1s,background-color 1s;
-transform: scale(1.06);
-background-color: rgb(171, 248, 223);
-}
-
 </style>
