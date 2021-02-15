@@ -2,21 +2,24 @@
 <div>
   <Header></Header>
   <div class="rectangle4">
-    <div class="title4">Lorem Ipsum</div>
+    <div class="title4">SVS</div>
     <div class="rectangle3"><img src="~@/assets/logo.svg" height=116% width=88%/></div>
     <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
   </div>
     <div class="title" >WELCOME TO SMART VOTING ROOM</div>
-    <button class="rectangle6 text6">CREATE ROOM</button>
-    <button class="rectangle5 text5">JOIN ROOM</button>
+    <router-link to="/create"><button class="rectangle6 text6">CREATE ROOM</button></router-link>
+    <router-link to="/join"><button class="rectangle5 text5">JOIN ROOM</button></router-link>
 </div>
 </template>
 
 <script>
 import Header from '../components/Header.vue'
+// import router from '../router/index.js'
 export default {
   components: { Header },
-  name: 'Home'
+  name: 'Home',
+  methods: {
+  }
 }
 </script>
 
@@ -24,11 +27,12 @@ export default {
 button{
   border: white;
   outline: none;
+  letter-spacing: 2px;
 }
 .rectangle4{
 position: absolute;
 width: 635px;
-height: 600px;
+height: 660px;
 left: 2%;
 top: 80px;
 background: #FFFFFF;
@@ -66,8 +70,7 @@ position: absolute;
 right: 14px;
 height: 89px;
 left: 5%;
-top: 509px;
-
+top: 540px;
 font-family: Roboto;
 font-style: normal;
 font-weight: normal;
@@ -89,7 +92,7 @@ line-height: 56px;
 display: flex;
 align-items: center;
 text-align: center;
-
+letter-spacing: 2px;
 color: #FFFFFF;
 
 text-shadow: 0px 0px 10px #5a7377;

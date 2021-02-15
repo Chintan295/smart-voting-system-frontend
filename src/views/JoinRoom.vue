@@ -9,7 +9,7 @@
     </div>
     <div class="form_data">
       <label>Select</label>
-      <select @change="select">
+      <select class="select1" @change="select">
         <option>Admin</option>
         <option>Guest</option>
       </select>
@@ -35,6 +35,8 @@ import '../assets/util.css'
 import router from '../router/index.js'
 import axios from 'axios'
 import api from '../connections/api'
+import SockJS from 'sockjs-client'
+import Stomp from 'webstomp-client'
 export default {
   components: { Header },
   name: 'JoinRoom',
@@ -45,6 +47,13 @@ export default {
       guestName: '',
       password: ''
     }
+  },
+  mounted () {
+    const url = new URL(window.location.href)
+    this.roomId = url.searchParams.get('roomId')
+    this.socket = new SockJS(api.SOCKET_PATH)
+    this.stompClient = Stomp.over(this.socket)
+    this.stompClient.connect({}, e => {})
   },
   methods: {
     select (event) {
@@ -60,29 +69,47 @@ export default {
         alert('Empty Fields..')
         return
       }
-      if (this.guestName !== '') {
-        sessionStorage.setItem('guestName', this.guestName)
-      } else {
-        this.guestName = 'admin'
-        sessionStorage.setItem('guestName', 'admin')
-      }
       // if (this.password !== '') {
       //   sessionStorage.setItem('password', this.password)
       // }
-      if (this.guestName === 'guest') {
+      if (this.guestSelected) {
         const joinData = {
-        roomId: this.roomId,
-        roomName: localStorage.getItem('roomId'),
-        guestName: this.guestName
+          roomId: this.roomId,
+          guestName: this.guestName
+        }
+        axios.post(api.SERVER_PATH + '/joinRoomAsGuest', joinData)
+          .then(res => {
+            sessionStorage.setItem('guestName', res.data.data.guestName)
+            sessionStorage.setItem('guestId', res.data.data.guestId)
+            sessionStorage.setItem('roomId', res.data.data.roomId)
+            this.stompClient.send('/app/joinRoomSocket', JSON.stringify(res.data.data), {})
+            router.push('/room?roomId=' + this.roomId)
+          })
+      } else {
+        const passwordData = {
+          roomId: this.roomId,
+          password: this.password
+        }
+        axios.post(api.SERVER_PATH + '/checkPassword', passwordData)
+          .then(res => {
+            console.log(res)
+            if (res.data.data) {
+              const joinData = {
+                roomId: this.roomId,
+                roomName: localStorage.getItem('roomId')
+              }
+              axios.post(api.SERVER_PATH + '/joinRoomAsAdmin', joinData).then(res => {
+                sessionStorage.setItem('guestName', res.data.data.guestName)
+                sessionStorage.setItem('guestId', res.data.data.guestId)
+                sessionStorage.setItem('roomId', res.data.data.roomId)
+                this.stompClient.send('/app/joinRoomSocket', JSON.stringify(res.data.data), {})
+                router.push('/room?roomId=' + this.roomId)
+              })
+            } else {
+              alert('Wrong Password !!')
+            }
+          })
       }
-      axios.post(api.SERVER_PATH+'/svs/joinRoomAsGuest', joinData)
-        .then(res => {
-          
-          router.push('/admin')
-        })
-      
-      }
-      
     }
   }
 }
@@ -125,6 +152,7 @@ input[type='text'], input[type='password'],select{
   font-size: 17px;
 }
 select{
+  background-color: white;
   font-size: 15px;
 }
 .form_data{

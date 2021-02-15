@@ -1,12 +1,9 @@
 <template>
   <div class="header">
     <img class="logo" src="~@/assets/logo.svg"/>
-    <span class="home">HOME
-    </span>
-    <span class="about">ABOUT
-    </span>
-    <span class="team">TEAM
-    </span>
+    <router-link to="/"><span class="home">HOME</span></router-link>
+    <router-link to="/"><span class="about">ABOUT</span></router-link>
+    <router-link to="/team"><span class="team">TEAM</span></router-link>
   </div>
 </template>
 
@@ -42,9 +39,8 @@ top: 0px;
   position: absolute;
 width: 91px;
 height: 55px;
-left: 200px;
 top: 5px;
-
+left: 109px;
 font-family: Roboto;
 font-style: normal;
 font-weight: normal;
@@ -61,7 +57,9 @@ color: #444444;
   position: absolute;
 width: 91px;
 height: 55px;
-left: 109px;
+
+left: 200px;
+
 top: 5px;
 
 font-family: Roboto;
